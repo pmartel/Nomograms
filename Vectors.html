@@ -1,0 +1,32 @@
+<!DOCUMENT html>
+<html>
+<head>
+<title>Develop Vector Object</title>
+</head>
+<body>
+<script src="Vectors.js"></script>
+<script>
+
+
+// test Vector
+var a = new Vector(1,2);
+var b = new Vector(2,1);
+var c = new String('1');
+var d = new Number(0);
+
+// displays the object with properties "Vector {x: 1, y: 2}" if toString is not defined,
+// otherwise calls a.toString()
+console.log(a); 
+console.log("b.toString = "+b.toString);
+console.log("b.toString() = "+b.toString());
+
+console.log( "a + b = " + a.add(b) )
+console.log( "a - b = " + a.sub(b) )
+console.log( "a * 5 = " + a.scale(5) )
+console.log( "a . b = " + a.dot(b) )
+console.log( "a.len()= " + a.len() )
+
+</script>
+</body>
+</html>
+
