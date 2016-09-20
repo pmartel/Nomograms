@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Addition Numogram</title>
+<title>Multiplication Numogram</title>
 </head>
 <body>
-<h2><center>U + V = W</center></h2>
-<div id="home">If you can see this, look for errors in the scripts with the script debugger (F12)
+<h2><center>U * V = W</center></h2>
+<div id="home" onmousedown="mouseFunction(event)">
+If you can see this, look for errors in the scripts with the script debugger (F12)
 </div>
 <p id="mus"></p>
 
 <!-- the import instruction is not yet implemented
-  Vectors should be included in curves
+  Vectors.js should be imported into curves.js
+  and that should be imported into the main script
   -->
 <script lang="ecmascript" src='Vectors.js' ></script>
 <script lang="ecmascript" src='curves.js'></script>
@@ -24,16 +26,16 @@ var vObj = setupVObj();
 var wObj = setupWObj();
 
 //set up svg and specify size
-sText = '<svg width = "'+ dWidth + '" height = "' + dHeight +'" >'; 
+sText = '<svg width = "'+ dWidth + '" height = "' + dHeight +'" >/n'; 
 //draw bounding box
-sText += '<rect width="'+ dWidth + '" height="' + dHeight + '" style="fill:white;stroke-width:3;stroke:grey" />';
+sText += '<rect width="'+ dWidth + '" height="' + dHeight + '" style="fill:white;stroke-width:3;stroke:grey" />\n';
 //draw curves
 //debugger;
 sText += drawCurve( uObj);
 sText += drawCurve( vObj);
 sText += drawCurve( wObj);
 //finish svg string and display in <div> "home"
-sText += ' </svg>';
+sText += ' </svg>\n';
 home.innerHTML = sText;
 
 
@@ -41,54 +43,72 @@ home.innerHTML = sText;
 // These functions should take a parameter and return a value in the range 0 - 100 which will
 // be scaled and mapped into the svg display.
 function setupUObj(){
-   var o = {};
-   o.title = {x:-5,y:95,t:"U"}; // curve title info
-   o.domain=[0,1,2,3,4,5,6,7,8,9,10]; // plotted points
-   o.scale=[0,2,4,6,8,10]; // labelled points
-   o.majorTicPoints=[];
-   o.majorTics=[0,2,4,6,8,10];
-   o.minorTics=[1,3,5,7,9];
-   o.x=function(p){return 0;}
-   o.y=function(p){return 10*p;}
-   return o;
+	var o = new Curve;
+	var i, del;
+	o.title = {x:80,y:95,t:"U"}; // curve title info
+	del = 0.1;
+	for(i=0;i<(3/del+1);i++){
+		o.domain[i]=i*del;
+	}
+
+	o.scale=[0,1,2,3]; // labelled points
+	o.majorTicPoints=[]; // populated at run time
+	del = 0.5;
+	for(i=0;i<3/del+1;i++){
+		o.majorTics[i]= i*del;
+	}
+	del = 0.1;
+	for(i=0;i<3/del+1;i++){
+		o.minorTics[i]= i*del;
+	}
+	o.x=function(p){return 50+10*p;}
+	o.y=function(p){return 10*p*p;}
+	return o;
 }
 
 function setupVObj(){
-   var o = {};
-   o.title = {x:105,y:95,t:"V"}; // curve title info
-   o.domain=[0,1,2,3,4,5,6,7,8,9,10]; // plotted points
-   o.scale=[0,2,4,6,8,10]; // labelled points
-   o.majorTicPoints=[];
-   o.majorTics=[0,2,4,6,8,10];
-   o.minorTics=[1,3,5,7,9];
-   o.x=function(p){return 100;}
-   o.y=function(p){return 10*p;}
-   return o;
+	var o = new Curve;
+	var i, del;
+	o.title = {x:20,y:95,t:"V"}; // curve title info
+	del = 0.1;
+	for(i=0;i<(3/del+1);i++){
+		o.domain[i]=i*del;
+	}
+
+	o.scale=[1,2,3]; // labelled points
+	o.majorTicPoints=[]; // populated at run time
+	del = 0.5;
+	for(i=0;i<3/del+1;i++){
+		o.majorTics[i]= i*del;
+	}
+	del = 0.1;
+	for(i=0;i<3/del+1;i++){
+		o.minorTics[i]= i*del;
+	}
+	o.x=function(p){return 50-10*p;}
+	o.y=function(p){return 10*p*p;}
+	return o;
 }
 
 function setupWObj(){
-	var o = {};
+	var o = new Curve;
 	var i;
    
 	o.title = {x:45,y:95,t:"W"}; // curve title info
 	//use for loops for these
-	o.domain=[];
-	for( i=0;i<21;i++){
-		o.domain[i] = i; 
+	o.domain=[0,9]; // plotted points
+	o.scale=[1,2,3,4,5,6,7,8,9]; // labelled points
+	o.majorTicPoints=[]; // populated at run time
+	o.majorTics=[];
+	for(i=0;i<19;i++){
+		o.majorTics[i]= i/2;
 	}
-	o.scale=[];
-	for(i=0;i<11;i++){
-		o.scale[i]=2*i;
-	}
-    o.majorTicPoints=[];
-    o.majorTics=o.scale;
 	o.minorTics=[];
-	for(i=0;i<10;i++){
-		o.minorTics[i]=2*i+1;
+	for(i=0;i<90;i++){
+		o.minorTics[i]= i * 0.1;
 	}
-	
 	o.x=function(p){return 50;}
-	o.y=function(p){return 5*p;}
+	o.y=function(p){return 10*p;}
 	return o;
 }
 
