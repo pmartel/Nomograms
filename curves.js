@@ -122,7 +122,12 @@ function drawTics(o, type ){
 function drawATic(o, arr, i1, ticLen, type){
 	var ticInfo ={};
 	var p0= new Vector(), p1= new Vector(), p2= new Vector();
+	var temp, j, v0, v1;
 	
+	v0 = arr[i1];
+	v1 = v0+ o.delta;
+	p0.x = o.x(v0); p0.y = o.y(v0);
+	p1.x = o.x(v1); p1.y = o.y(v1);
 	p1 = p0.sub(p1);
 	p1 = p1.scale(ticLen/p1.len()); // this is a vector ticLen long
 	 // this makes an orthogonal vector to the original p1
