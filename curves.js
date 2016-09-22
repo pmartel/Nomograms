@@ -30,6 +30,7 @@ var Curve = function(){
 	o.majorTicPoints=[];
 	o.majorTics=[];
 	o.minorTics=[];
+	o.delta=undefined; // small value for slope calculation
 	o.x; // parametric function for x values of curve
 	o.y; // parametric function for y values of curve
 	return o;
@@ -38,7 +39,7 @@ var Curve = function(){
 
 function drawCurve(o){ //debugger;
 	var t = '';
-	var i;
+	var i, delta = Infinity, d1;
 	var p;
 	
 	// draw curve
@@ -55,9 +56,21 @@ function drawCurve(o){ //debugger;
 	//close path
 	t += '" stroke="black" fill="none" />\n';
 		
+	// if delta value is undefined, find the smallest minor tic delta and use 0.1 of that
+	if(o.delta == undefined){
+		for(i=1;i<o.minorTics.length;i++){
+			d1 = Math.abs(o.minorTics[i] - o.minorTics[i-1]);
+			if ( d1 < delta){
+				delta = d1;
+			}
+		}
+		o.delta = 0.1 * delta;
+	}
+	
 	// draw major tics and find scale positions
 	// assume scale positions are a subset of major tics
 	// the major tics and minor tics are also paths
+	
 	t += drawTics(o,"majorTics");
 	// draw minor tics
     t += drawTics(o,"minorTics",i);
@@ -92,31 +105,24 @@ function drawTics(o, type ){
 		//error.  should not happen 
 	}
  	t1 = '<path d="';
-	for( i=0;i<(arr.length-1);i++){
+	for( i=0;i<(arr.length);i++){
 		// get a ticLen long vector at right angles to the curve at p0
-		ticInfo = drawATic(o, arr, i, i+1, ticLen, type);
+		ticInfo = drawATic(o, arr, i, ticLen, type);
 		t1 += ticInfo.t;
 		if(doScale){
 			o.majorTicPoints[i] = ticInfo;
 		}
 	}
-	ticInfo = drawATic(o, arr, i, i-1, ticLen, type);
-    t1 += ticInfo.t;
-	if(doScale){
-		o.majorTicPoints[i] = ticInfo;
-	}
+
 //close path
 	t1 += '" stroke="black" fill="none" />\n'
 	return t1;
 }
 
-function drawATic(o, arr, i1, i2, ticLen, type){
+function drawATic(o, arr, i1, ticLen, type){
 	var ticInfo ={};
 	var p0= new Vector(), p1= new Vector(), p2= new Vector();
-	var temp, j;
 	
-	p0.x = o.x(arr[i1]); p0.y = o.y(arr[i1]);
-	p1.x = o.x(arr[i2]); p1.y = o.y(arr[i2]);
 	p1 = p0.sub(p1);
 	p1 = p1.scale(ticLen/p1.len()); // this is a vector ticLen long
 	 // this makes an orthogonal vector to the original p1
@@ -152,18 +158,11 @@ function addScaleText(o){
 		if(j == -1){ // scale point does not match major tic.  Should not happen.
 			continue;
 		}
-		if (j<o.majorTics.length-1){
-			p = o.majorTicPoints[j].p2;
-			p.x += 0.3;
-		    p.y += 0.3;
-		} else {
-			p = o.majorTicPoints[j].p1;
-			p.x += 0.3;
-		    p.y += 0.3;			
-		}
+		p = o.majorTicPoints[j].p2;
+		p.x += 0.3;
+		p.y += 0.3;
 		t3 += '<text  font-size="12" font-family="Verdana" x="'+p.x+'" y="'+p.y+'">'+
 		v+'</text>\n';
-		
 	}
 	return t3;
 }
