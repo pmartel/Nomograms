@@ -18,9 +18,19 @@ If you can see this, look for errors in the scripts with the script debugger (F1
 <script lang="ecmascript" src='curves.js'></script>
 
 <script>
-var sText;
+/* Note:  This is from Adams: Nomography Theory and Application 
+ * problem 1-2 and figure 1-9
+ * X1 = 0           Y1 = 10 * B
+ * X2 = 15          Y2 = 10 * A
+ * X3 = 15 *X/(x+1) Y3 = -10 * x^2/(x+1)
+ */
 
-// set up the curves
+var sText;
+var pLegend;  // a phony vector (point) to specify legend position
+var scaleX = 100/15;
+var scaleY = 100/10/2; // the figure has its origin in the middle of the left side
+
+// set up scaling from figure and// set up the curves
 var uObj = setupUObj();
 var vObj = setupVObj();
 var wObj = setupWObj();
@@ -29,12 +39,22 @@ var wObj = setupWObj();
 sText = '<svg width = "'+ dWidth + '" height = "' + dHeight +'" >/n'; 
 //draw bounding box
 sText += '<rect width="'+ dWidth + '" height="' + dHeight + '" style="fill:white;stroke-width:3;stroke:grey" />\n';
+
 //draw curves
 //debugger;
 sText += drawCurve( uObj);
 sText += drawCurve( vObj);
 sText += drawCurve( wObj);
 //finish svg string and display in <div> "home"
+//place an extra legend
+pLegend = new Vector(30,30);
+pLegend = scaleToSVG(pLegend);
+sText += '<text  font-size="20" font-family="Verdana" x="'+pLegend.x+
+			'" y="'+pLegend.y+'" >x > 0 for a</text>';
+pLegend = new Vector(30,25);
+pLegend = scaleToSVG(pLegend);
+sText += '<text  font-size="20" font-family="Verdana" x="'+pLegend.x+
+			'" y="'+pLegend.y+'" >x < 0 for -a</text>';
 sText += ' </svg>\n';
 home.innerHTML = sText;
 
@@ -42,6 +62,8 @@ home.innerHTML = sText;
 // These curve objects have  label information, domain, and scale information and curve's parametric functions.
 // These functions should take a parameter and return a value in the range 0 - 100 which will
 // be scaled and mapped into the svg display.
+
+
 function setupUObj(){
 	var o = new Curve;
 	var i, del;
@@ -62,8 +84,8 @@ function setupUObj(){
 	for(i=-10/del;i<10/del+1;i++){
 		o.minorTics[i+10/del]= i*del;
 	}
-	o.x=function(p){return 0;}
-	o.y=function(p){return 5*p +50;}
+	o.x=function(p){return scaleX*(0);};
+	o.y=function(p){return scaleY*(p) +50;};
 	return o;
 }
 
@@ -85,8 +107,8 @@ function setupVObj(){
 	for(i=-10/del;i<10/del+1;i++){
 		o.minorTics[i+10/del]= i*del;
 	}
-	o.x=function(p){return 100;}
-	o.y=function(p){return 5*p +50;}
+	o.x=function(p){return scaleX*(15);};
+	o.y=function(p){return scaleY*(p) +50;};
 	return o;
 }
 
@@ -94,7 +116,7 @@ function setupWObj(){
 	var o = new Curve;
 	var i;
    
-	o.title = {x:45,y:50,t:"x (sign matches a)"}; // curve title info
+	o.title = {x:45,y:50,t:"x"}; // curve title info
 	//use for loops for these
 	del=0.1;
 	for(i=0;i<11/del;i++){
@@ -102,13 +124,13 @@ function setupWObj(){
 	}
 	o.scale=[0,0.1,0.2,0.3,0.4,0.5,1,2,3,4,5,6,7,8,9,10]; // labelled points
 	o.majorTicPoints=[]; // populated at run time
-	o.majorTics=[0,,0.05,0.1,0.15,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.5,2,2.5,3,4,5,6,7,8,9,10];;
+	o.majorTics=[0,,0.05,0.1,0.15,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.5,2,2.5,3,4,5,6,7,8,9,10];
 
-	for(i=0;i<90;i++){
+	for(i=0;i<100;i++){
 		o.minorTics[i]= i * 0.1;
 	}
-	o.x=function(p){return 100*p/(p+1);}
-	o.y=function(p){return 50-10*p*p/(p+1);}
+	o.x=function(p){return scaleX*(15*p/(p+1));}
+	o.y=function(p){return 50- scaleY*(p*p/(p+1));}
 	return o;
 }
 
