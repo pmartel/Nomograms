@@ -172,12 +172,8 @@ function addScaleText(o){
 	return t3;
 }
 
-// this takes a Vector object and scales it from the "paper" 100 x 100 square to the svg space
+// this takes a Vectort object and scales it from the "paper" 100 x 100 square to the svg space
 function scaleToSVG(p){
-	var pS={};
-	if(isNaN(p.x)|isNaN(p.y)){
-		debugger;
-	}
-	pS = { x:(scale0.x + scaleDelta.x *p.x/100), y:(scale0.y + scaleDelta.y *p.y/100)};
+	var pS = { x:scale0.x + scaleDelta.x *p.x/100, y:scale0.y + scaleDelta.y *p.y/100};
 	return pS;
 }
