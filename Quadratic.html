@@ -45,7 +45,6 @@ sText += '<rect width="'+ dWidth + '" height="' + dHeight + '" style="fill:white
 sText += drawCurve( uObj);
 sText += drawCurve( vObj);
 sText += drawCurve( wObj);
-//finish svg string and display in <div> "home"
 //place an extra legend
 pLegend = new Vector(30,30);
 pLegend = scaleToSVG(pLegend);
@@ -55,6 +54,8 @@ pLegend = new Vector(30,25);
 pLegend = scaleToSVG(pLegend);
 sText += '<text  font-size="20" font-family="Verdana" x="'+pLegend.x+
 			'" y="'+pLegend.y+'" >x < 0 for -a</text>';
+// this is where to insert code to draw a line for an isopleth
+//finish svg string and display in <div> "home"
 sText += ' </svg>\n';
 home.innerHTML = sText;
 
@@ -124,9 +125,9 @@ function setupWObj(){
 	}
 	o.scale=[0,0.1,0.2,0.3,0.4,0.5,1,2,3,4,5,6,7,8,9,10]; // labelled points
 	o.majorTicPoints=[]; // populated at run time
-	o.majorTics=[0,,0.05,0.1,0.15,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.5,2,2.5,3,4,5,6,7,8,9,10];
+	o.majorTics=[0,0.05,0.1,0.15,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.5,2,2.5,3,4,5,6,7,8,9,10];
 
-	for(i=0;i<100;i++){
+	for(i=0;i<109;i++){
 		o.minorTics[i]= i * 0.1;
 	}
 	o.x=function(p){return scaleX*(15*p/(p+1));}
