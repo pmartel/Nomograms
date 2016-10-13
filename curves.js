@@ -2,7 +2,9 @@
  * Phil Martel
  */
 // import 'Vectors'; doesn't work currently
- 
+// <script lang="ecmascript" src='Vectors.js' ></script>
+//import Vector from 'Vectors.js'; 
+
 // Specify the svg to fill the a good part of the page (so far no obvious way to do "all")
 // This runs when the scrip is loaded
 
@@ -155,7 +157,9 @@ function drawATic(o, arr, i1, ticLen, type){
 function addScaleText(o){
 	var i, j, v;
 	var t3 = "";
-	var p= new Vector();
+	var p1= new Vector(), p2 = new Vector();
+	var offset = new Vector(0.5,4); // Emperically, for horizontal text an offset of (0.5,4) works to center and offset the scale
+	var a;
 	
 	for(i=0;i<o.scale.length;i++){
 		v = o.scale[i];
@@ -163,10 +167,20 @@ function addScaleText(o){
 		if(j == -1){ // scale point does not match major tic.  Should not happen.
 			continue;
 		}
-		p = o.majorTicPoints[j].p2;
-		p.x += 0.3;
-		p.y += 0.3;
-		t3 += '<text  font-size="12" font-family="Verdana" x="'+p.x+'" y="'+p.y+'">'+
+		p1 = o.majorTicPoints[j].p1;
+		p2 = o.majorTicPoints[j].p2;
+		// p1 = p2.sub(p1); doesn't work even though Vector() does...
+		p1.x = p2.x - p1.x; p1.y = p2.y - p1.y;
+		a = Math.atan2(p1.y,p1.x);
+		// Emperically, for horizontal text an offset of (0.5,4) works to center and offset the scale
+		offset.x = 0.5; offset.y = 4;
+		// p2 = p2.add(offset);  doesn't work even though Vector() does...
+		p2.x += offset.x;p2.y += offset.y;
+		//  <text x="20" y="20" fill="red" transform="rotate(90 20,20)">I love SVG</text>
+		// rotate seems to be angle and rotate position. In general easiset if it is the same as (x,y)
+		// this may work better  transform="translate(200,100)rotate(180)">Hello!</text>
+		//t3 += '<text  font-size="12" font-family="Verdana" x="'+p.x+'" y="'+p.y+'">'+
+		t3 += '<text  font-size="12" font-family="Verdana" transform="translate('+p2.x+','+p2.y+')rotate('+a*180/Math.PI+')">'+
 		v+'</text>\n';
 	}
 	return t3;
