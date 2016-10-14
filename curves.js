@@ -14,7 +14,7 @@ DEALINGS IN THE SOFTWARE.
 */
 // import 'Vectors'; doesn't work currently
 // <script lang="ecmascript" src='Vectors.js' ></script>
-//import Vector from 'Vectors.js'; 
+//import Vector from 'Vectors.js';
 
 // Specify the svg to fill the a good part of the page (so far no obvious way to do "all")
 // This runs when the scrip is loaded
@@ -168,9 +168,10 @@ function drawATic(o, arr, i1, ticLen, type){
 function addScaleText(o){
 	var i, j, v;
 	var t3 = "";
-	var p1= new Vector(), p2 = new Vector();
+	var p1= new Vector(), p2 = new Vector(), pDif = new Vector();
 	var offset = new Vector(0.5,4); // Emperically, for horizontal text an offset of (0.5,4) works to center and offset the scale
-	var a;
+	var rOff = new Vector();
+	var a,c,s;
 	
 	for(i=0;i<o.scale.length;i++){
 		v = o.scale[i];
@@ -180,13 +181,24 @@ function addScaleText(o){
 		}
 		p1 = o.majorTicPoints[j].p1;
 		p2 = o.majorTicPoints[j].p2;
-		// p1 = p2.sub(p1); doesn't work even though Vector() does...
-		p1.x = p2.x - p1.x; p1.y = p2.y - p1.y;
-		a = Math.atan2(p1.y,p1.x);
-		// Emperically, for horizontal text an offset of (0.5,4) works to center and offset the scale
-		offset.x = 0.5; offset.y = 4;
+		//p1 = p2.sub(p1); //doesn't work even though Vector() does...
+		pDif.x = p2.x - p1.x; pDif.y = p2.y - p1.y;
+		
+		if (pDif.x < 0){// reverse direction of label and use p1 instead of p2
+			a = Math.atan2(-pDif.y,-pDif.x);
+			p2.x = p1.x; p2.y = p1.y;
+			c = Math.cos(a); s = Math.sin(a);
+			rOff.x = -offset.x * c - offset.y * s;
+			rOff.y = offset.y * c - offset.x * s;
+		}
+		else {
+			a = Math.atan2(pDif.y,pDif.x);
+			c = Math.cos(a); s = Math.sin(a);
+			rOff.x = offset.x * c + offset.y * s;
+			rOff.y = offset.y * c + offset.x * s;
+		}
 		// p2 = p2.add(offset);  doesn't work even though Vector() does...
-		p2.x += offset.x;p2.y += offset.y;
+		p2.x += rOff.x; p2.y += rOff.y;
 		//  <text x="20" y="20" fill="red" transform="rotate(90 20,20)">I love SVG</text>
 		// rotate seems to be angle and rotate position. In general easiset if it is the same as (x,y)
 		// this may work better  transform="translate(200,100)rotate(180)">Hello!</text>
