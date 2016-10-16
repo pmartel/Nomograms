@@ -27,7 +27,14 @@ DEALINGS IN THE SOFTWARE.
 var dWidth = window.innerWidth * 0.85;
 var dHeight = window.innerHeight * 0.8;
 
-var scale0 = {}, scale100 = {}, scaleDelta ={};
+// make a square drawing region
+var dMin = Math.min(dWidth,dHeight);
+var pCenter = new Vector(dWidth/2,dHeight/2);
+var pMin = new Vector(dMin/2,dMin/2);
+var pMax = pCenter.add(pMin);
+pMin = pCenter.sub(pMin);
+
+
 var scale0 = new Vector( dWidth*0.1, dHeight*0.9);
 var scale100 = new Vector( dWidth*0.9, dHeight*0.1);
 var scaleDelta = scale100.sub(scale0);
@@ -152,7 +159,8 @@ function drawATic(o, arr, i1, ticLen, type){
 	p2 = scaleToSVG(p2);
 	ticInfo.p1 =p1;
 	ticInfo.p2 = p2;
-	if(type == 'minor'){ // skip if it's also a major tic (possible double line)
+	if(type == 'minorTics'){ 
+		// skip if it's also a major tic (possible double line)
 		temp = arr[i1];
 		j = o.majorTics.indexOf(temp);
 		if( j > -1){
@@ -209,8 +217,8 @@ function addScaleText(o){
 	return t3;
 }
 
-// this takes a Vectort object and scales it from the "paper" 100 x 100 square to the svg space
+// this takes a Vector -object and scales it from the "paper" 100 x 100 square to the svg space
 function scaleToSVG(p){
-	var pS = { x:scale0.x + scaleDelta.x *p.x/100, y:scale0.y + scaleDelta.y *p.y/100};
+	var pS = new Vector( scale0.x + scaleDelta.x *p.x/100, scale0.y + scaleDelta.y *p.y/100);
 	return pS;
 }

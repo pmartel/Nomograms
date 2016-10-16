@@ -37,9 +37,12 @@ var vObj = setupVObj();
 var wObj = setupWObj();
 
 //set up svg and specify size
+//dWidth = Math.min(dHeight,dWidth);
+//dHeight = dWidth;
 sText = '<svg width = "'+ dWidth + '" height = "' + dHeight +'" >/n'; 
 //draw bounding box
-sText += '<rect width="'+ dWidth + '" height="' + dHeight + '" style="fill:white;stroke-width:3;stroke:grey" />\n';
+//sText += '<rect width="'+ dWidth + '" height="' + dHeight + '" style="fill:white;stroke-width:3;stroke:grey" />\n';
+sText += '<rect x="'+pMin.x+'" y="'+pMin.y+'" width="'+ dMin + '" height="' + dMin + '" style="fill:white;stroke-width:3;stroke:grey" />\n';
 //draw curves
 //debugger;
 sText += drawCurve( uObj);
