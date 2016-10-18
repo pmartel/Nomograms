@@ -23,11 +23,10 @@ DEALINGS IN THE SOFTWARE.
 //dWidth = document.body.clientWidth*0.85;	
 //dHeight = screen.availHeight*0.7;
 
-// it took a while to find these.
+// it took a while to find window.inner* .
 var dWidth = window.innerWidth * 0.85;
 var dHeight = window.innerHeight * 0.8;
 
-var scale0 = {}, scale100 = {}, scaleDelta ={};
 var scale0 = new Vector( dWidth*0.1, dHeight*0.9);
 var scale100 = new Vector( dWidth*0.9, dHeight*0.1);
 var scaleDelta = scale100.sub(scale0);
@@ -209,7 +208,7 @@ function addScaleText(o){
 	return t3;
 }
 
-// this takes a Vectort object and scales it from the "paper" 100 x 100 square to the svg space
+// this takes a Vector object and scales it from the "paper" 100 x 100 square to the svg space
 function scaleToSVG(p){
 	var pS = { x:scale0.x + scaleDelta.x *p.x/100, y:scale0.y + scaleDelta.y *p.y/100};
 	return pS;
