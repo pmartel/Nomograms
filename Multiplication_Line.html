@@ -48,6 +48,8 @@ var wObj = setupWObj();
 sText = '<svg width = "'+ dWidth + '" height = "' + dHeight +'" >/n'; 
 //draw bounding box
 sText += '<rect x="'+pMin.x+'" y="'+pMin.y+'" width="'+ dMin + '" height="' + dMin + '" style="fill:white;stroke-width:3;stroke:grey" />\n';
+var boundingBox = {t:pMin.y,l:pMin.x,r:pMin.x+dMin,b:pMin.y+dMin};  //used to delimit line
+
 //draw curves
 //debugger;
 sText += drawCurve( uObj);
