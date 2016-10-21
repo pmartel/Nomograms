@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Multiplication Numogram</title>
+<title>Quadratic Numogram</title>
 <!-- 
 Copyright (c) 2016 Philip Martel
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
@@ -15,12 +15,11 @@ DEALINGS IN THE SOFTWARE.
 -->
 </head>
 <body>
-<h2><center>Nomogram for U * V = W with live isopleth</center></h2>
+<h2><center>Nomogram for x<sup>2</sup>+ax+b=0 with live isopleth</center></h2>
 <div id="home" onmousedown="mouseFunction(event)">
 If you can see this, look for errors in the scripts with the script debugger (F12)
 </div>
-
-<!-- These are the input values.  Two should have values, one should be blank -->
+<!-- For line (isopleth) These are the input values.  Two should have values, one should be blank -->
 <span id="uLabel">U</span><input type="text" id="uVal" value="">&nbsp;&nbsp;
 <span id="vLabel">V</span><input type="text" id="vVal" value="">&nbsp;&nbsp;
 <span id="wLabel">w</span><input type="text" id="wVal" value="">&nbsp;&nbsp;
@@ -34,12 +33,23 @@ If you can see this, look for errors in the scripts with the script debugger (F1
   -->
 <script lang="ecmascript" src='Vectors.js' ></script>
 <script lang="ecmascript" src='curves.js'></script>
+<!-- For line (isopleth) -->
 <script lang="ecmascript" src='LineWork.js'></script>
 
 <script>
-var sText;
+/* Note:  This is from Adams: Nomography Theory and Application 
+ * problem 1-2 and figure 1-9
+ * X1 = 0           Y1 = 10 * B
+ * X2 = 15          Y2 = 10 * A
+ * X3 = 15 *X/(x+1) Y3 = -10 * x^2/(x+1)
+ */
 
-// set up the curves
+var sText;
+var pLegend;  // a phony vector (point) to specify legend position
+var scaleX = 100/15;
+var scaleY = 100/10/2; // the figure has its origin in the middle of the left side
+
+// set up scaling from figure and set up the curves
 var uObj = setupUObj();
 var vObj = setupVObj();
 var wObj = setupWObj();
@@ -47,74 +57,89 @@ var wObj = setupWObj();
 //set up svg and specify size
 sText = '<svg width = "'+ dWidth + '" height = "' + dHeight +'" >/n'; 
 //draw bounding box
-sText += '<rect x="'+pMin.x+'" y="'+pMin.y+'" width="'+ dMin + '" height="' + dMin + '" style="fill:white;stroke-width:3;stroke:grey" />\n';
-var boundingBox = {t:pMin.y,l:pMin.x,r:pMin.x+dMin,b:pMin.y+dMin};  //used to delimit line
+sText += '<rect x="'+dWidth*0.07+'" width="'+ dWidth * 0.93 + '" height="' + dHeight + '" style="fill:white;stroke-width:3;stroke:grey" />\n';
+
+// set up bounds for drawing line (isopleth)
+var boundingBox = {t:0,l:dWidth*0.07,r:dWidth,b:dHeight}; // delimit the line
+
+// fix labels for line (isopleth) input boxes 
+document.getElementById("uLabel").innerHTML=uObj.title.t;
+document.getElementById("vLabel").innerHTML=vObj.title.t;
+document.getElementById("wLabel").innerHTML=wObj.title.t;
 
 //draw curves
 //debugger;
 sText += drawCurve( uObj);
 sText += drawCurve( vObj);
 sText += drawCurve( wObj);
-// save a copy of the nomogram as a base for adding a line
+//place an extra legend
+pLegend = new Vector(30,30);
+pLegend = scaleToSVG(pLegend);
+sText += '<text  font-size="20" font-family="Verdana" x="'+pLegend.x+
+			'" y="'+pLegend.y+'" >x > 0 for a</text>';
+pLegend = new Vector(30,25);
+pLegend = scaleToSVG(pLegend);
+sText += '<text  font-size="20" font-family="Verdana" x="'+pLegend.x+
+			'" y="'+pLegend.y+'" >x < 0 for -a</text>';
+
+// save a copy of the nomogram as a base for adding a line (isopleth)
 var sBase = sText; 
+
 //finish svg string and display in <div> "home"
 sText += ' </svg>\n';
 home.innerHTML = sText;
 
-// set up for drawing line
-// fix labels 
-document.getElementById("uLabel").innerHTML=uObj.title.t;
-document.getElementById("vLabel").innerHTML=vObj.title.t;
-document.getElementById("wLabel").innerHTML=wObj.title.t;
 
 // These curve objects have  label information, domain, and scale information and curve's parametric functions.
 // These functions should take a parameter and return a value in the range 0 - 100 which will
 // be scaled and mapped into the svg display.
+
+
 function setupUObj(){
 	var o = new Curve;
 	var i, del;
-	o.title = {x:80,y:95,t:"U"}; // curve title info
-	del = 0.1;
-	for(i=0;i<(3/del+1);i++){
-		o.domain[i]=i*del;
-	}
+	
+	o.title = {x:5,y:95,t:"b"}; // curve title info
 
-	o.scale=[0,1,2,3]; // labelled points
+	// since it's a straight line, 2 points are sufficient
+	o.domain = [-10,10];
+	for(i=-10;i<11;i++){
+		o.scale[i+10] = i; // labelled points
+	}
 	o.majorTicPoints=[]; // populated at run time
 	del = 0.5;
-	for(i=0;i<3/del+1;i++){
-		o.majorTics[i]= i*del;
+	for(i=-10/del;i<10/del+1;i++){
+		o.majorTics[i+10/del]= i*del;
 	}
 	del = 0.1;
-	for(i=0;i<3/del+1;i++){
-		o.minorTics[i]= i*del;
+	for(i=-10/del;i<10/del+1;i++){
+		o.minorTics[i+10/del]= i*del;
 	}
-	o.x=function(p){return 50+10*p;}
-	o.y=function(p){return 10*p*p;}
+	o.x=function(p){return scaleX*(0);};
+	o.y=function(p){return scaleY*(p) +50;};
 	return o;
 }
 
 function setupVObj(){
 	var o = new Curve;
 	var i, del;
-	o.title = {x:20,y:95,t:"V"}; // curve title info
-	del = 0.1;
-	for(i=0;i<(3/del+1);i++){
-		o.domain[i]=i*del;
+	o.title = {x:95,y:95,t:"a"}; // curve title info
+	// since it's a straight line, 2 points are sufficient
+	o.domain = [-10,10];
+	for(i=-10;i<11;i++){
+		o.scale[i+10] = i; // labelled points
 	}
-
-	o.scale=[1,2,3]; // labelled points
 	o.majorTicPoints=[]; // populated at run time
 	del = 0.5;
-	for(i=0;i<3/del+1;i++){
-		o.majorTics[i]= i*del;
+	for(i=-10/del;i<10/del+1;i++){
+		o.majorTics[i+10/del]= i*del;
 	}
 	del = 0.1;
-	for(i=0;i<3/del+1;i++){
-		o.minorTics[i]= i*del;
+	for(i=-10/del;i<10/del+1;i++){
+		o.minorTics[i+10/del]= i*del;
 	}
-	o.x=function(p){return 50-10*p;}
-	o.y=function(p){return 10*p*p;}
+	o.x=function(p){return scaleX*(15);};
+	o.y=function(p){return scaleY*(p) +50;};
 	return o;
 }
 
@@ -122,58 +147,23 @@ function setupWObj(){
 	var o = new Curve;
 	var i;
    
-	o.title = {x:45,y:95,t:"W"}; // curve title info
+	o.title = {x:45,y:50,t:"x"}; // curve title info
 	//use for loops for these
-	o.domain=[0,9]; // plotted points
-	o.scale=[1,2,3,4,5,6,7,8,9]; // labelled points
-	o.majorTicPoints=[]; // populated at run time
-	o.majorTics=[];
-	for(i=0;i<19;i++){
-		o.majorTics[i]= i/2;
+	del=0.1;
+	for(i=0;i<11/del;i++){
+		o.domain[i]=i*del;
 	}
-	o.minorTics=[];
-	for(i=0;i<90;i++){
+	o.scale=[0,0.1,0.2,0.3,0.4,0.5,1,2,3,4,5,6,7,8,9,10]; // labelled points
+	o.majorTicPoints=[]; // populated at run time
+	o.majorTics=[0,0.05,0.1,0.15,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.5,2,2.5,3,4,5,6,7,8,9,10];
+
+	for(i=0;i<109;i++){
 		o.minorTics[i]= i * 0.1;
 	}
-	o.x=function(p){return 50;}
-	o.y=function(p){return 10*p;}
+	o.x=function(p){return scaleX*(15*p/(p+1));}
+	o.y=function(p){return 50- scaleY*(p*p/(p+1));}
 	return o;
 }
-
-/*
-function processLineInfo(){
-	// at this point 2 of the variables should have numeric values and the third should be blank
-	var uVal = document.getElementById("uVal").value;
-	var vVal = document.getElementById("vVal").value;
-	var wVal = document.getElementById("wVal").value;
-	var empties = 3, skipIt = false;
-	var p=[], idx=0;
-	
-	if( uVal.length > 0) {
-		uVal = Number(uVal);
-		if(Number.isNaN(uVal)){skipIt = true;}
-		p[idx++]={o:uObj,v:uVal};
-		empties--;
-	}
-	if( vVal.length > 0) {
-		vVal = Number(vVal);
-		if(Number.isNaN(vVal)){skipIt = true;}
-		p[idx++]={o:vObj,v:vVal};
-		empties--;
-	}
-	if( wVal.length > 0) {
-		wVal = Number(wVal);
-		if(Number.isNaN(wVal)){skipIt = true;}
-		p[idx++]={o:wObj,v:wVal};
-		empties--;
-	}
-	if (skipIt || (empties != 1)){
-		window.alert("Please enter two numbers and a blank in the 3 boxes");
-		return;
-	}
-	debugger;
-}
-*/
 
 // put in an element with onmousedown="mouseFunction(event)" 
 function mouseFunction(e) {  // this function displays mouse position
