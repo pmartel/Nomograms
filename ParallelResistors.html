@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Multiplication Numogram</title>
+<title>Parallel Resistor Numogram</title>
 <!-- 
 Copyright (c) 2016 Philip Martel
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
@@ -15,15 +15,13 @@ DEALINGS IN THE SOFTWARE.
 -->
 </head>
 <body>
-<h2><center>U * V = W</center></h2>
-<div id="home" onmousedown="mouseFunction(event)">
-If you can see this, look for errors in the scripts with the script debugger (F12)
+<h2><center>1/R1 + 1/R2 = 1/R</center></h2>
+<div id="home">If you can see this, look for errors in the scripts with the script debugger (F12)
 </div>
 <p id="mus"></p>
 
 <!-- the import instruction is not yet implemented
-  Vectors.js should be imported into curves.js
-  and that should be imported into the main script
+  Vectors should be included in curves
   -->
 <script lang="ecmascript" src='Vectors.js' ></script>
 <script lang="ecmascript" src='curves.js'></script>
@@ -37,19 +35,27 @@ var vObj = setupVObj();
 var wObj = setupWObj();
 
 //set up svg and specify size
-//dWidth = Math.min(dHeight,dWidth);
-//dHeight = dWidth;
-sText = '<svg width = "'+ dWidth + '" height = "' + dHeight +'" >/n'; 
+sText = '<svg width = "'+ dWidth + '" height = "' + dHeight +'" >'; 
 //draw bounding box
-//sText += '<rect width="'+ dWidth + '" height="' + dHeight + '" style="fill:white;stroke-width:3;stroke:grey" />\n';
-sText += '<rect x="'+pMin.x+'" y="'+pMin.y+'" width="'+ dMin + '" height="' + dMin + '" style="fill:white;stroke-width:3;stroke:grey" />\n';
+//sText += '<rect x="'+pMin.x+'" y="'+pMin.y+'" width="'+ dMin + '" height="' + dMin + '" style="fill:white;stroke-width:3;stroke:grey" />';
+sText += '<rect x="'+dWidth*0.07+'" width="'+ dWidth * 0.93 + '" height="' + dHeight + '" style="fill:white;stroke-width:3;stroke:grey" />';
 //draw curves
 //debugger;
 sText += drawCurve( uObj);
 sText += drawCurve( vObj);
 sText += drawCurve( wObj);
 //finish svg string and display in <div> "home"
-sText += ' </svg>\n';
+/*
+var p0 = new Vector(0,0);
+var p100 = new Vector(100,100);
+
+p0=scaleToSVG(p0);
+p100=scaleToSVG(p100);
+
+sText += '<text fill="red" font-size="20" font-family="Verdana" x="'+p0.x+'" y="'+p0.y+'">+</text>';
+sText += '<text fill="red" font-size="20" font-family="Verdana" x="'+p100.x+'" y="'+p100.y+'">+</text>'; 
+*/
+sText += ' </svg>';
 home.innerHTML = sText;
 
 
@@ -57,72 +63,62 @@ home.innerHTML = sText;
 // These functions should take a parameter and return a value in the range 0 - 100 which will
 // be scaled and mapped into the svg display.
 function setupUObj(){
-	var o = new Curve;
-	var i, del;
-	o.title = {x:80,y:95,t:"U"}; // curve title info
-	del = 0.1;
-	for(i=0;i<(3/del+1);i++){
-		o.domain[i]=i*del;
+	var o = {},i;
+	
+	o.title = {x:-10,y:85,t:"R1"}; // curve title info
+	o.domain=[0,10]; // plotted points
+	o.scale=[0,2,4,6,8,10]; // labelled points
+	o.majorTics=[];
+	o.majorTicPoints=[];
+	o.minorTics=[];
+	for(i=0;i<11;i++){
+		o.majorTics[i]=i;
 	}
-
-	o.scale=[0,1,2,3]; // labelled points
-	o.majorTicPoints=[]; // populated at run time
-	del = 0.5;
-	for(i=0;i<3/del+1;i++){
-		o.majorTics[i]= i*del;
+	for(i=0;i<21;i++){
+		o.minorTics[i]=i/2;
 	}
-	del = 0.1;
-	for(i=0;i<3/del+1;i++){
-		o.minorTics[i]= i*del;
-	}
-	o.x=function(p){return 50+10*p;}
-	o.y=function(p){return 10*p*p;}
-	return o;
+   o.x=function(p){return 50-5*p;}
+   o.y=function(p){return Math.sqrt(3)/2*10*p;}
+   return o;
 }
 
 function setupVObj(){
-	var o = new Curve;
-	var i, del;
-	o.title = {x:20,y:95,t:"V"}; // curve title info
-	del = 0.1;
-	for(i=0;i<(3/del+1);i++){
-		o.domain[i]=i*del;
+	var o = {},i;
+	
+	o.title = {x:100,y:5,t:"R2"}; // curve title info
+	o.domain=[0,10]; // plotted points
+	o.scale=[0,2,4,6,8,10]; // labelled points
+	o.majorTics=[];
+	o.majorTicPoints=[];
+	o.minorTics=[];
+	for(i=0;i<11;i++){
+		o.majorTics[i]=i;
 	}
-
-	o.scale=[1,2,3]; // labelled points
-	o.majorTicPoints=[]; // populated at run time
-	del = 0.5;
-	for(i=0;i<3/del+1;i++){
-		o.majorTics[i]= i*del;
+	for(i=0;i<21;i++){
+		o.minorTics[i]=i/2;
 	}
-	del = 0.1;
-	for(i=0;i<3/del+1;i++){
-		o.minorTics[i]= i*del;
-	}
-	o.x=function(p){return 50-10*p;}
-	o.y=function(p){return 10*p*p;}
-	return o;
+   o.x=function(p){return 50+10*p;}
+   o.y=function(p){return 0;}
+   return o;
 }
 
 function setupWObj(){
-	var o = new Curve;
-	var i;
+	var o = {},i;
    
-	o.title = {x:45,y:95,t:"W"}; // curve title info
-	//use for loops for these
-	o.domain=[0,9]; // plotted points
-	o.scale=[1,2,3,4,5,6,7,8,9]; // labelled points
-	o.majorTicPoints=[]; // populated at run time
+	o.title = {x:95,y:85,t:"R"}; // curve title info
+	o.domain=[0,10]; // plotted points
+	o.scale=[0,2,4,6,8,10]; // labelled points
 	o.majorTics=[];
-	for(i=0;i<19;i++){
-		o.majorTics[i]= i/2;
-	}
+	o.majorTicPoints=[];
 	o.minorTics=[];
-	for(i=0;i<90;i++){
-		o.minorTics[i]= i * 0.1;
+	for(i=0;i<11;i++){
+		o.majorTics[i]=i;
 	}
-	o.x=function(p){return 50;}
-	o.y=function(p){return 10*p;}
+	for(i=0;i<21;i++){
+		o.minorTics[i]=i/2;
+	}
+	o.x=function(p){return 50+5*p;}
+	o.y=function(p){return Math.sqrt(3)/2*10*p;}
 	return o;
 }
 
