@@ -22,6 +22,10 @@ DEALINGS IN THE SOFTWARE.
 <span id="uLabel">U</span><input type="text" id="uVal" value="">&nbsp;&nbsp;
 <span id="vLabel">V</span><input type="text" id="vVal" value="">&nbsp;&nbsp;
 <span id="wLabel">w</span><input type="text" id="wVal" value="">&nbsp;&nbsp;
+
+<!-- For line (isopleth) This has to be here Internet Explorer doesn't handle the forward reference -->
+<script lang="ecmascript" src='LineWork.js'></script>
+
 <input type="submit" onclick="processLineInfo()" value="DrawLine">
 
 <p id="mus"></p>
@@ -31,8 +35,6 @@ DEALINGS IN THE SOFTWARE.
   -->
 <script lang="ecmascript" src='Vectors.js' ></script>
 <script lang="ecmascript" src='curves.js'></script>
-<!-- For line (isopleth) -->
-<script lang="ecmascript" src='LineWork.js'></script>
 
 <script>
 var sText;

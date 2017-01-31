@@ -8,19 +8,22 @@ function processLineInfo(){
 	
 	if( uVal.length > 0) {
 		uVal = Number(uVal);
-		if(Number.isNaN(uVal)){skipIt = true;}
+		//if(Number.isNaN(uVal)){skipIt = true;}
+		if(uVal !== uVal){skipIt = true;} // this acts like Number.isNan() but works with Internet Explorer
 		p[idx++]={o:uObj,v:uVal};
 		empties--;
 	}
 	if( vVal.length > 0) {
 		vVal = Number(vVal);
-		if(Number.isNaN(vVal)){skipIt = true;}
+		//if(Number.isNaN(vVal)){skipIt = true;}
+		if(vVal !== vVal){skipIt = true;}
 		p[idx++]={o:vObj,v:vVal};
 		empties--;
 	}
 	if( wVal.length > 0) {
 		wVal = Number(wVal);
-		if(Number.isNaN(wVal)){skipIt = true;}
+		//if(Number.isNaN(wVal)){skipIt = true;}
+		if(wVal !== wVal){skipIt = true;}
 		p[idx++]={o:wObj,v:wVal};
 		empties--;
 	}

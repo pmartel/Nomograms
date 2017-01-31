@@ -16,6 +16,7 @@ DEALINGS IN THE SOFTWARE.
 </head>
 <body>
 <h2><center>Nomogram for x<sup>2</sup>+ax+b=0 with live isopleth</center></h2>
+
 <div id="home" onmousedown="mouseFunction(event)">
 If you can see this, look for errors in the scripts with the script debugger (F12)
 </div>
@@ -23,6 +24,8 @@ If you can see this, look for errors in the scripts with the script debugger (F1
 <span id="uLabel">U</span><input type="text" id="uVal" value="">&nbsp;&nbsp;
 <span id="vLabel">V</span><input type="text" id="vVal" value="">&nbsp;&nbsp;
 <span id="wLabel">w</span><input type="text" id="wVal" value="">&nbsp;&nbsp;
+<!-- For line (isopleth) -->
+<script lang="ecmascript" src='LineWork.js'></script>
 <input type="submit" onclick="processLineInfo()" value="DrawLine">
 
 <p id="mus"></p>
@@ -31,10 +34,9 @@ If you can see this, look for errors in the scripts with the script debugger (F1
   Vectors.js should be imported into curves.js
   and that should be imported into the main script
   -->
+
 <script lang="ecmascript" src='Vectors.js' ></script>
 <script lang="ecmascript" src='curves.js'></script>
-<!-- For line (isopleth) -->
-<script lang="ecmascript" src='LineWork.js'></script>
 
 <script>
 /* Note:  This is from Adams: Nomography Theory and Application 
