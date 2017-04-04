@@ -2,7 +2,7 @@
 // We could have 2D, 3D or nD vectors.  For now work on 2D
 
 /*
-Copyright (c) 2016 Philip Martel
+Copyright (c) 2016,2017 Philip Martel
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -33,14 +33,20 @@ Vector.prototype.sub = function(b){
    return new Vector(this.x - b.x, this.y - b.y);
 }
 
-Vector.prototype.scale = function(c){
+Vector.prototype.scale = function(c){ // multiply by scalar
    return new Vector(this.x * c, this.y *c);
 }
 
-Vector.prototype.dot = function(b){
+Vector.prototype.dot = function(b){  // dot product
    return (this.x * b.x + this.y * b.y);
 }
 
 Vector.prototype.len = function(){
    return Math.sqrt(this.dot(this));
+}
+
+// Cross product is usually done with 3-D vectors. 
+//For this 2-D work assume Vector.z = 0, and return the result as a scalar
+Vector.prototype.cross = function(b){ // cross product
+	return (this.x * b.y - this.y *b.x);
 }

@@ -36,7 +36,10 @@ console.log( "a - b = " + a.sub(b) )
 console.log( "a * 5 = " + a.scale(5) )
 console.log( "a . b = " + a.dot(b) )
 console.log( "a.len()= " + a.len() )
-
+console.log( "a.cross(b)=" + a.cross(b) )
+console.log("(1,1)x a =" + new Vector(1,1).cross(a) )
+console.log("(1,1)x b =" + new Vector(1,1).cross(b) )
+console.log("(1,1)x (1,1.1) =" + new Vector(1,1).cross(new Vector(1,1.1)) )
 </script>
 </body>
 </html>
