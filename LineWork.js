@@ -133,6 +133,7 @@ function getSolution(p0, p1, xObj ){
 	var n, val;
 	var	crossVal, oldCross; //cross products
 	var crossAbs, minAbs={n:undefined, z:undefined, f:undefined}; // absolute values
+	var retVal;
 	
 	if (xObj == undefined){
 		return "error specifying unknown";
@@ -154,11 +155,20 @@ function getSolution(p0, p1, xObj ){
 		if (crossAbs < minAbs.f){
 			minAbs.n=n; minAbs.z = val; minAbs.f = crossAbs;
 		}
-		if (crossVal * oldCross <0){ //we crossed 
-		
+		if (crossVal * oldCross <0){ //We crossed. Do a linear interpolation on cross products.
+			var oldVal = xObj.majorTics[n-1], ret;
+			var dx = val - oldVal, dy = crossVal - oldCross;
+			
+			retVal = oldVal - dx/dy * oldCross;
+			break;
 		}
-		
+		oldCross = crossVal;
 	}
+	if (typeof retVal == 'number'){
+		retVal = retVal.toPrecision(3);
+	}
+	return xObj.title.t + " = " + retVal;
+
 	debugger;
 }
 
