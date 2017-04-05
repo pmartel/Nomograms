@@ -132,19 +132,19 @@ function getSolution(p0, p1, xObj ){
 	var pCurve = new Vector();
 	var n, val;
 	var	crossVal, oldCross; //cross products
-	var crossAbs, minAbs={n:undefined, z:undefined, f:undefined}; // absolute values
+	var crossAbs, minAbs={tic:undefined, val:undefined, cross:undefined}; // absolute values
 	var retVal;
 	
 	if (xObj == undefined){
 		return "error specifying unknown";
 	}
-	// determine rough crossing
+	// determine rough crossing by running through the major tic points and checking the cross product
 	val = xObj.majorTics[0];
 	oldCross = getCross( val, xObj, p0, vLine);
 	if (oldCross == 0){
 		return xObj.title.t + " = " + val;
 	}
-	minAbs.n = 0; minAbs.z = val; minAbs.f = Math.abs(oldCross);
+	minAbs.tic = 0; minAbs.val = val; minAbs.cross = Math.abs(oldCross);
 	for( n=1; n < xObj.majorTics.length; n++){
 		val = xObj.majorTics[n];
 		crossVal =  getCross( val, xObj, p0, vLine);
@@ -152,8 +152,9 @@ function getSolution(p0, p1, xObj ){
 			return xObj.title.t + " = " + val;
 		}
 		crossAbs = Math.abs(crossVal);
-		if (crossAbs < minAbs.f){
-			minAbs.n=n; minAbs.z = val; minAbs.f = crossAbs;
+		if (crossAbs < minAbs.cross){ 
+			// smaller minAbs means closer to line
+			minAbs.tic=n; minAbs.val = val; minAbs.cross = crossAbs;
 		}
 		if (crossVal * oldCross <0){ //We crossed. Do a linear interpolation on cross products.
 			var oldVal = xObj.majorTics[n-1], ret;
@@ -164,7 +165,23 @@ function getSolution(p0, p1, xObj ){
 		}
 		oldCross = crossVal;
 	}
-	if (typeof retVal == 'number'){
+	if ( retVal == undefined ){ // no crossses; check for "touch"
+		// minAbs has the major tic closest to the line. find which adjacent majot tic is next closest
+		var minLow, minHigh;
+		n = minAbs.tic;
+		if(n > 0){
+			minLow = {tic:undefined, val:undefined, cross:undefined};
+			minLow.tic = n-1; minLow.val = xObj.majorTics[n-1];
+			minLow.cross = Math.abs(getCross( minLow.val, xObj, p0, vLine));
+		}
+		if(n < xObj.majorTics.length-1){
+			minHigh = {tic:undefined, val:undefined, cross:undefined};
+			minHigh.tic = n+1; minHigh.val = xObj.majorTics[n+1];
+			minHigh.cross = Math.abs(getCross( minHigh.val, xObj, p0, vLine));
+		}
+		//!!! work point
+	}
+	if (typeof retVal == 'number'){ // it might be undefined
 		retVal = retVal.toPrecision(3);
 	}
 	return xObj.title.t + " = " + retVal;
