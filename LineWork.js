@@ -95,7 +95,11 @@ function processLineInfo(){
 	document.getElementById('home').innerHTML = sText;
 	
 	var solutionString = "";
-	if(document.getElementById("solveIt").checked){
+	var solveBox = document.getElementById("solveIt");
+	if (solveBox == undefined ){ // no Solve (or Solution) in HTML
+		return;
+	}
+	if(solveBox.checked){
 		//need to select the variable to be solved and pass its object
 		var xObj;
 		switch ( 7 - pObj[0].target - pObj[1].target){
