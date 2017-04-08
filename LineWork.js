@@ -171,6 +171,13 @@ function getSolution(p0, p1, xObj ){
 	}
 	if ( retVal == undefined ){ // no crossses; check for "touch"
 		// minAbs has the major tic closest to the line. find which adjacent majot tic is next closest
+
+		// if the line touches the curve, the cross product near the intersection must be small 
+		// remember that a x b = |a|*|b|*sin(angle). Find the angle to remove the vector lenght factor
+		var vCurve = new Vector(xObj.x(minAbs.val),xObj.y(minAbs.val))
+		vCurve = vCurve.sub(p0);		
+		var ang = Math.asin(minAbs.cross / (vLine.len() * vCurve.len()));
+		
 		var minLow, minHigh;
 		n = minAbs.tic;
 		if(n > 0){
