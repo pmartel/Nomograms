@@ -100,7 +100,7 @@ function processLineInfo(){
 		return;
 	}
 	if(solveBox.checked){
-		//need to select the variable to be solved and pass its object
+		// Select the variable to be solved and pass its object (.target is 1, 2, or 4)
 		var xObj;
 		switch ( 7 - pObj[0].target - pObj[1].target){
 			case 1:
@@ -170,25 +170,16 @@ function getSolution(p0, p1, xObj ){
 		oldCross = crossVal;
 	}
 	if ( retVal == undefined ){ // no crossses; check for "touch"
-		// minAbs has the major tic closest to the line. find which adjacent majot tic is next closest
-
+		// minAbs has the major tic closest to the line. 
 		// if the line touches the curve, the cross product near the intersection must be small 
-		// remember that a x b = |a|*|b|*sin(angle). Find the angle to remove the vector lenght factor
+		// remember that a x b = |a|*|b|*sin(angle). Find the angle to remove the vector length factor
+		
 		var vCurve = new Vector(xObj.x(minAbs.val),xObj.y(minAbs.val))
 		vCurve = vCurve.sub(p0);		
-		var ang = Math.asin(minAbs.cross / (vLine.len() * vCurve.len()));
-		
-		var minLow, minHigh;
-		n = minAbs.tic;
-		if(n > 0){
-			minLow = {tic:undefined, val:undefined, cross:undefined};
-			minLow.tic = n-1; minLow.val = xObj.majorTics[n-1];
-			minLow.cross = Math.abs(getCross( minLow.val, xObj, p0, vLine));
-		}
-		if(n < xObj.majorTics.length-1){
-			minHigh = {tic:undefined, val:undefined, cross:undefined};
-			minHigh.tic = n+1; minHigh.val = xObj.majorTics[n+1];
-			minHigh.cross = Math.abs(getCross( minHigh.val, xObj, p0, vLine));
+		var ang = Math.asin(minAbs.cross / (vLine.len() * vCurve.len()));  
+		// we can avoid asin if we wish since sin(x) -> x as x -> 0.  Note that ang is >= 0 because of the abs() in line 158
+		if( ang < .007 ) { // emperical graze angle see QuadSolutionNotes.ods spreadsheet
+			return "Possible solution for " + xObj.title.t + " near " + minAbs.val;
 		}
 		//!!! work point
 	}
